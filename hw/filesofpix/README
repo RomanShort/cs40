@@ -1,0 +1,26 @@
+Roman Short (rshort02) and Henry Lee (jelee02)
+
+We spent many hours in Cummings, with help from several TAs. Alec (hope that's
+spelled correctly) was a huge help with some valgrind issues. 
+
+We beleive everything is correctly implemented. We tested with all provided 
+pgm files and used valgrind on each. Our expansion of the array in readaline
+seems to behave as expected, and we do not know of any errors at this time. 
+
+A note on structure: Overall program flow is as follows. 
+Program reads lines using readaline until EOF. Until the correct key
+is found, a Hanson table is used to add a key as the character
+array and a value as a Hanson sequence of digits. Once the correct key
+is found with Table_get, the Hanson table is no longer used. 
+Then we use strcmp with the correct_key, which is now known, and 
+the current filler (array of injected characters for current line)
+and add the sequence of digits created from that line to an overarching
+Hanson sequence of sequences if the correct_key matches filler. 
+
+FixFile handles the printing of the P5 PGM, and restoration operates
+as a main program that calls restore() from restore.h. We aimed for 
+multiple layers of abstraction and tried to keep our code as modularized
+and simple to follow as possible. 
+
+
+Total hours spent: 20 hours
