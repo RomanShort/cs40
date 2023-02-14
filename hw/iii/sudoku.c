@@ -1,9 +1,25 @@
+/**************************************************************
+ *
+ *                     sudoku.c
+ *
+ * Assignment: Hw2 iii
+ * Authors: Roman Short (rshort02), Henry Lee (jelee02)
+ * Date: Feb 13, 2023
+ *     
+ * This file contains the program used to identify valid sudoku
+ * solutions. The sudoku program operates as a predicate by returning
+ * the exit code of the program as either 0 (EXIT_SUCCESS) or 1 (EXIT_FAILURE)
+ * to indicate whether the puzzle is solved or not. 
+ *
+ **************************************************************/
+
 #include "uarray2.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include "pnmrdr.h"
 #include <math.h>
+
 
 struct rdr_struct {
         Pnmrdr_T rdr;
@@ -22,6 +38,11 @@ int row_helper(UArray2_T grid, int chunk, int idx);
 int col_helper(UArray2_T grid, int chunk, int idx);
 int mini_grid_helper(UArray2_T grid, int chunk, int idx);
 
+/* function: main()
+ * parameter: argc, the number of arguments passed to the program
+ * and argv, the array of arguments
+ * purpose: to start the sudoku program
+ /
 int main(int argc, char *argv[])
 {
         assert(argc < 3);
@@ -43,22 +64,46 @@ int main(int argc, char *argv[])
         //exit(1); // should not get here
 }
 
+/* function: row_helper
+ * parameter: a grid of numbers as an 2D array, the size of a row(width), 
+   and an index of a number within the row 
+ * purpose: to get the numbers from a row
+ */
 int row_helper(UArray2_T grid, int chunk, int idx) 
 {
     return *((int *) UArray2_at(grid, chunk, idx));
 }
 
+/* function: col_helper
+ * parameter: a grid of numbers as an 2D array, the size of a column(height),
+   and an index of a number within a columnn 
+ * purpose: to get the numbers from a column
+ * 
+ */
 int col_helper(UArray2_T grid, int chunk, int idx) 
 {
     return *((int *) UArray2_at(grid, idx, chunk));
 }
 
+/* function: mini_grid_helper
+ * parameter: a grid of numbers as an 2D array, the size of a 3*3 matrix, 
+   and an index of a number within 3*3 matrix. 
+ * purpose: to get the numbers from a mini grid
+ * 
+ */
 int mini_grid_helper(UArray2_T grid, int chunk, int idx) 
 {
     return  *((int *) UArray2_at(grid, 3 * (chunk / 3) + idx % 3,
                                 3 * (chunk / 3) + idx / 3));
 }
 
+/* function: check_sudoku
+ * parameter: a grid of numbers as an 2D array, the size of a 3*3 matrix, 
+   and an index of a number within 3*3 matrix. 
+ * purpose: create a boolean array and if a pixel has a same intensity return true
+ * otherwise, return false
+ * 
+ */
 bool check_sudoku(UArray2_T sudoku_grid, int helper(UArray2_T sudoku_grid,
                                                     int chunk,
                                                     int idx))
@@ -86,6 +131,11 @@ bool check_sudoku(UArray2_T sudoku_grid, int helper(UArray2_T sudoku_grid,
         return true;
 }
 
+/* function: check_properties
+ * parameter: the struct Pnmrdr_mapdata
+ * purpose: A solved sudoku puzzle's the maximum pixel intensity is 9
+ * so set its width, height, and denominator as 9
+ */
 bool check_properties(Pnmrdr_mapdata data)
 {
         unsigned required_val = 9;
@@ -94,6 +144,11 @@ bool check_properties(Pnmrdr_mapdata data)
                 data.denominator == required_val);
 }
 
+/* function: pgm_read
+ * parameter: a file pointer
+ * purpose: A solved sudoku puzzle's the maximum pixel intensity is 9
+ * so set its width, height, and denominator as 9
+ */
 UArray2_T pgmread(FILE *fp)
 {
         Pnmrdr_T image_rdr = Pnmrdr_new(fp);
@@ -136,6 +191,10 @@ UArray2_T pgmread(FILE *fp)
         return grid; 
 }
 
+/* function: set_values
+ * parameter: A grid of 2d array, a void pointer val, cl. 
+ * purpose: to set the values in a grid afterreading from Pnmrdr
+ */
 void set_values(int i, int j, UArray2_T grid, void *val, void *cl)
 {
         
@@ -156,7 +215,10 @@ void set_values(int i, int j, UArray2_T grid, void *val, void *cl)
         (void) i;
         (void) j;
 }
-
+/* function: open_file
+ * parameter: a filename, the name of a input graymap file  
+ * purpose: to set the values in a grid after reading from Pnmrdr
+ */
 FILE *open_file(char *filename)
 {
         assert(filename != NULL);
@@ -164,7 +226,12 @@ FILE *open_file(char *filename)
         assert(fp != NULL);
         return fp;
 }
-
+/* function: process_file
+ * parameter: a file pointer
+ * purpose: to check if sudoku is solved or not.
+ * read from file and check if in each row, or in each column,
+ * or in three-by-three submap, no two pixels have the same intensity. 
+ */
 bool process_file(FILE *fp)
 {
         assert(fp != NULL);
